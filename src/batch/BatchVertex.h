@@ -28,4 +28,5 @@ struct BatchVertex
 	Vec3 Position;
 	Vec4 Color;
 	Vec2 Texture;
+	Vec3 Normal;
 };

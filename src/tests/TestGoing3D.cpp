@@ -113,6 +113,7 @@ namespace test {
         layout.Push<float>(3);
         layout.Push<float>(4);
         layout.Push<float>(2);
+        layout.Push<float>(3);
         m_VAO->AddBuffer(*m_VertexBuffer, layout);
 
         // IBO stuff
@@ -126,6 +127,10 @@ namespace test {
         // setting up some uniforms
         m_Texture = std::make_unique<Texture>("./res/textures/FreeSky.png");
         m_Shader->SetUniform1i("u_Texture", 0); // 0 is the slot
+
+        m_ShaderLight = std::make_unique<Shader>("./res/shaders/LightGoing3D.shader");
+        Shader shader();
+        m_ShaderLight->Bind();
 	}
 
     TestGoing3D::~TestGoing3D()
@@ -140,6 +145,9 @@ namespace test {
             m_Shader = std::make_unique<Shader>("./res/shaders/Going3D.shader");
             Shader shader();
             m_Shader->Bind();
+
+            m_Shader->SetUniform3f("u_lightColor", 1.0f, 1.0f, 1.0f);
+            m_Shader->SetUniform3f("u_lightPos", 1.2f, 1.0f, 2.0f);
         }
         else
         {
@@ -170,156 +178,192 @@ namespace test {
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[0 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, 0.0f, -1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[1 + f * 6];
         buffer->Texture = { 1.0f,0.0f };
+        buffer->Normal = { 0.0f, 0.0f, -1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[2 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, 0.0f, -1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[3 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, 0.0f, -1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[4 + f * 6];
         buffer->Texture = { 0.0f,1.0f };
+        buffer->Normal = { 0.0f, 0.0f, -1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[5 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, 0.0f, -1.0f };
         buffer++;
         f++;
         // Face 2
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[0 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, 0.0f, 1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[1 + f * 6];
         buffer->Texture = { 1.0f,0.0f };
+        buffer->Normal = { 0.0f, 0.0f, 1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[2 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, 0.0f, 1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[3 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, 0.0f, 1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[4 + f * 6];
         buffer->Texture = { 0.0f,1.0f };
+        buffer->Normal = { 0.0f, 0.0f, 1.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[5 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, 0.0f, 1.0f };
         buffer++;
         f++;
         // Face 3
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[0 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { -1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[1 + f * 6];
         buffer->Texture = { 1.0f,0.0f };
+        buffer->Normal = { -1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[2 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { -1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[3 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { -1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[4 + f * 6];
         buffer->Texture = { 0.0f,1.0f };
+        buffer->Normal = { -1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[5 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { -1.0f, 0.0f, 0.0f };
         buffer++;
         f++;
         // Face 4
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[0 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[1 + f * 6];
         buffer->Texture = { 1.0f,0.0f };
+        buffer->Normal = { 1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[2 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[3 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[4 + f * 6];
         buffer->Texture = { 0.0f,1.0f };
+        buffer->Normal = { 1.0f, 0.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[5 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 1.0f, 0.0f, 0.0f };
         buffer++;
         f++;
         // Face 5
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[0 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, 1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[1 + f * 6];
         buffer->Texture = { 1.0f,0.0f };
+        buffer->Normal = { 0.0f, 1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[2 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, 1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[3 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, 1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[4 + f * 6];
         buffer->Texture = { 0.0f,1.0f };
+        buffer->Normal = { 0.0f, 1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[5 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, 1.0f, 0.0f };
         buffer++;
         f++;
         // Face 6
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[0 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, -1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[1 + f * 6];
         buffer->Texture = { 1.0f,0.0f };
+        buffer->Normal = { 0.0f, -1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[2 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, -1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[3 + f * 6];
         buffer->Texture = { 1.0f,1.0f };
+        buffer->Normal = { 0.0f, -1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[4 + f * 6];
         buffer->Texture = { 0.0f,1.0f };
+        buffer->Normal = { 0.0f, -1.0f, 0.0f };
         buffer++;
         buffer->Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         buffer->Position = positions[5 + f * 6];
         buffer->Texture = { 0.0f,0.0f };
+        buffer->Normal = { 0.0f, -1.0f, 0.0f };
         buffer++;
         f++;
 
@@ -338,6 +382,7 @@ namespace test {
         m_cam.UpdateCam(delta);
         m_View = glm::lookAt(m_cam.m_camPos, m_cam.m_camDirection, m_cam.m_camUp);
 
+        // Draw Cube1
         {
             // update model, projection and view matrices
             glm::mat4 model = glm::mat4(1.0f);
@@ -346,9 +391,13 @@ namespace test {
             glm::mat4 mvp = m_Proj * m_View * model;
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_Shader->SetUniformMat4f("u_Model", model);
+
+            m_VAO->Bind();
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
+        // Draw Cube2
         {
             // update model, projection and view matrices
             glm::mat4 model = glm::mat4(1.0f);
@@ -358,8 +407,25 @@ namespace test {
             glm::mat4 mvp = m_Proj * m_View * model;
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_Shader->SetUniformMat4f("u_Model", model);
+
+            m_VAO->Bind();
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+        }
+        // Draw Light Cube
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(1.2f, 1.0f, 2.0f));
+            model = glm::scale(model, glm::vec3(0.2f));
+
+            glm::mat4 mvp = m_Proj * m_View * model;
+            m_ShaderLight->Bind();
+            m_ShaderLight->SetUniformMat4f("u_MVP", mvp);
+
+            m_VAO->Bind();
+
+            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_ShaderLight);
         }
 
         delta += step/100.0f;
@@ -371,6 +437,8 @@ namespace test {
         ImGui::SliderFloat("Sensitivity", &m_cam.m_sensitivity, 0.1f, 2.0f);
         ImGui::Checkbox("FPS Mode", &m_cam.m_FPSMode);
         ImGui::Checkbox("Texture Shader", &m_textureShader);
+        ImGui::Text("Cam position: x: %.3f, y: %.3f, z: %.3f", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
+        ImGui::Text("Cam looking at: x: %.3f, y: %.3f, z: %.3f", m_cam.m_camDirection.x, m_cam.m_camDirection.y, m_cam.m_camDirection.z);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
 }

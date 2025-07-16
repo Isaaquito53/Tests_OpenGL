@@ -30,6 +30,7 @@ namespace test {
 		std::unique_ptr<BatchVertexBuffer>m_VertexBuffer;
 		std::unique_ptr<BatchIndexBuffer> m_IndexBuffer;
 		std::unique_ptr<Shader> m_Shader;
+		std::unique_ptr<Shader> m_ShaderLight;
 		std::unique_ptr<Texture> m_Texture;
 		Camera m_cam;
 
