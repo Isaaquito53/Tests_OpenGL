@@ -20,6 +20,8 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - Fix a texture/vertices/idk problem of the Texture2D test.
 
+- Update the imgui lib and the controls.
+
 - Now I am trying to learn and understand the basics of Lights, so probably, I will be adding some Lights features to the Going3D test soon (probably, it isn't going to be the last thing that I will add to this test).
 
 - Add a Cube Class or something to easily load or prepare all the vertex stuff of a cube.
