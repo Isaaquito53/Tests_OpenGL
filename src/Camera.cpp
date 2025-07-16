@@ -57,7 +57,7 @@ void Camera::Walk()
 
 void Camera::Look()
 {
-	if (ImGui::IsMouseDown(0))
+	if (ImGui::IsMouseDown(1))
 	{
 		//std::cout << "mouse clicked" << std::endl;
 		float xpos = ImGui::GetIO().MousePos.x;

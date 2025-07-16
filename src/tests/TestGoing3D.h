@@ -35,5 +35,10 @@ namespace test {
 		Camera m_cam;
 
 		glm::mat4 m_Proj, m_View;
+
+		float m_ambientStrenght;
+		float m_diffuseStrenght;
+		float m_specularStrenght;
+		int m_shininessLevel;
 	};
 }

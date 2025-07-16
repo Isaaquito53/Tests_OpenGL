@@ -18,6 +18,8 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - When I developed the Snake test the vertices were different, so I should fix the definition of the vertices for this test.
 
+- Fix a texture/vertices/idk problem of the Texture2D test.
+
 - Now I am trying to learn and understand the basics of Lights, so probably, I will be adding some Lights features to the Going3D test soon (probably, it isn't going to be the last thing that I will add to this test).
 
 ## Credits/References:

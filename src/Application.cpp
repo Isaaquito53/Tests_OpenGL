@@ -71,7 +71,7 @@ int main(void)
         currentTest = testMenu;
 
         testMenu->RegisterTest<test::TestClearColor>("Clear Color");
-        testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+        //testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
         //testMenu->RegisterTest<test::TestSnake>("Snake");
         testMenu->RegisterTest<test::TestGoing3D>("Going 3D");
 

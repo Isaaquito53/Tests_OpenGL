@@ -28,7 +28,7 @@ namespace test {
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-        m_Shader = std::make_unique<Shader>("./res/shaders/Basic.shader");
+        m_ShaderBasic = std::make_unique<Shader>("./res/shaders/Basic.shader");
         m_VAO = std::make_unique<VertexArray>();
         m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
         VertexBufferLayout layout;
@@ -39,11 +39,11 @@ namespace test {
         m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
 
         Shader shader();
-        m_Shader->Bind();
-        m_Shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        m_ShaderBasic->Bind();
+        m_ShaderBasic->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
         m_Texture = std::make_unique<Texture>("./res/textures/PS_Logo.png");
-        m_Shader->SetUniform1i("u_Texture", 0); // 0 is the slot
+        m_ShaderBasic->SetUniform1i("u_Texture", 0); // 0 is the slot
 	}
 
 	TestTexture2D::~TestTexture2D()
@@ -67,21 +67,21 @@ namespace test {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_translationA);
             glm::mat4 mvp = m_Proj * m_View * model;
             //proj = glm::ortho(-2.0f + cos(r), 2.0f + cos(r), -1.5f + sin(r), 1.5f + sin(r), -1.0f, 1.0f);
-            m_Shader->Bind();
-            m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_ShaderBasic->Bind();
+            m_ShaderBasic->SetUniformMat4f("u_MVP", mvp);
             //shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_ShaderBasic);
         }
 
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_translationB);
             glm::mat4 mvp = m_Proj * m_View * model;
             //proj = glm::ortho(-2.0f + cos(r), 2.0f + cos(r), -1.5f + sin(r), 1.5f + sin(r), -1.0f, 1.0f);
-            m_Shader->Bind();
-            m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_ShaderBasic->Bind();
+            m_ShaderBasic->SetUniformMat4f("u_MVP", mvp);
 
-            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_ShaderBasic);
         }
 	}
 
