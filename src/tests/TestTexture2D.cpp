@@ -11,7 +11,7 @@ namespace test {
 	TestTexture2D::TestTexture2D()
         : m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)), 
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))),
-        m_translationA(200, 200, 0), m_translationB(400, 200, 0)
+        m_translationA(200, 200, 0), m_translationB(400, 200, 0), m_TextureTexture2D("./res/textures/PS_Logo.png")
 	{
         float positions[] = {
             -50.0f, -50.0f, 0.0f, 0.0f, // 0
@@ -26,6 +26,7 @@ namespace test {
         };
 
         GLCall(glEnable(GL_BLEND));
+        GLCall(glDisable(GL_DEPTH_TEST));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         m_ShaderBasic = std::make_unique<Shader>("./res/shaders/Basic.shader");
@@ -42,12 +43,16 @@ namespace test {
         m_ShaderBasic->Bind();
         m_ShaderBasic->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-        m_Texture = std::make_unique<Texture>("./res/textures/PS_Logo.png");
         m_ShaderBasic->SetUniform1i("u_Texture", 0); // 0 is the slot
 	}
 
 	TestTexture2D::~TestTexture2D()
 	{
+        m_VertexBuffer->Unbind();
+        m_IndexBuffer->Unbind();
+        m_VAO->Unbind();
+        m_ShaderBasic->Unbind();
+        m_TextureTexture2D.Unbind();
 	}
 
 	void TestTexture2D::OnUpdate(float deltaTime)
@@ -61,8 +66,9 @@ namespace test {
 
         Renderer renderer;
 
-        m_Texture->Bind();
+        m_TextureTexture2D.Bind();
 
+        
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_translationA);
             glm::mat4 mvp = m_Proj * m_View * model;
@@ -83,6 +89,7 @@ namespace test {
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_ShaderBasic);
         }
+        
 	}
 
 	void TestTexture2D::OnImGuiRender()

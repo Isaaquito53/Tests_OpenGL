@@ -71,13 +71,13 @@ int main(void)
         currentTest = testMenu;
 
         testMenu->RegisterTest<test::TestClearColor>("Clear Color");
-        //testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
-        //testMenu->RegisterTest<test::TestSnake>("Snake");
+        testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+        testMenu->RegisterTest<test::TestSnake>("Snake");
         testMenu->RegisterTest<test::TestGoing3D>("Going 3D");
 
         while (!glfwWindowShouldClose(window))
         {
-            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+            GLCall(glClearColor(0.2f, 0.5f, 0.6f, 1.0f));
             renderer.Clear();
 
             ImGui_ImplGlfwGL3_NewFrame();

@@ -25,7 +25,8 @@ namespace test {
         : m_Proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 100.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f))),
         m_textureShader(true), m_lastShader(true),
-        m_ambientStrenght(0.1f), m_diffuseStrenght(1.0f), m_specularStrenght(0.5f), m_shininessLevel(5)
+        m_ambientStrenght(0.1f), m_diffuseStrenght(1.0f), m_specularStrenght(0.5f), m_shininessLevel(5),
+        m_Texture("./res/textures/FreeSky.png")
     {
         // initialize dynamic content positions buffer
         for (unsigned int i = 0; i < MaxVertexCount; i++)
@@ -126,7 +127,6 @@ namespace test {
         m_Shader->Bind();
 
         // setting up some uniforms
-        m_Texture = std::make_unique<Texture>("./res/textures/FreeSky.png");
         m_Shader->SetUniform1i("u_Texture", 0); // 0 is the slot
 
         m_ShaderLight = std::make_unique<Shader>("./res/shaders/LightGoing3D.shader");
@@ -136,6 +136,12 @@ namespace test {
 
     TestGoing3D::~TestGoing3D()
     {
+        m_VertexBuffer->Unbind();
+        m_IndexBuffer->Unbind();
+        m_VAO->Unbind();
+        m_Shader->Unbind();
+        m_ShaderLight->Unbind();
+        m_Texture.Unbind();
     }
 
     void TestGoing3D::ChangeShader()
@@ -158,7 +164,6 @@ namespace test {
             m_Shader->Bind();
 
             // setting up some uniforms
-            m_Texture = std::make_unique<Texture>("./res/textures/FreeSky.png");
             m_Shader->SetUniform1i("u_Texture", 0); // 0 is the slot
         }
         m_lastShader = m_textureShader;
@@ -378,7 +383,7 @@ namespace test {
         if (m_lastShader != m_textureShader)
             ChangeShader();
 
-        m_Texture->Bind();
+        m_Texture.Bind();
 
         m_cam.UpdateCam(delta);
         m_View = glm::lookAt(m_cam.m_camPos, m_cam.m_camDirection, m_cam.m_camUp);

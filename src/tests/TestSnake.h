@@ -15,8 +15,8 @@ namespace test {
 		TestSnake();
 		~TestSnake();
 
-		//bool SnakeEatApple();
-		//void SnakeGrow();
+		bool SnakeEatApple();
+		void SnakeGrow();
 		void OnUpdate(float deltaTime) override;
 		void OnRender() override;
 		void OnImGuiRender() override;
