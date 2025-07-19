@@ -6,6 +6,8 @@
 #include "batch/BatchVertexBufferLayout.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "figures/Cube.h"
+#include "figures/Floor.h"
 
 #include <memory>
 
@@ -32,6 +34,7 @@ namespace test {
 		std::unique_ptr<Shader> m_Shader;
 		std::unique_ptr<Shader> m_ShaderLight;
 		Texture m_Texture;
+		Texture m_TextureFloor;
 		Camera m_cam;
 
 		glm::mat4 m_Proj, m_View;
@@ -40,5 +43,8 @@ namespace test {
 		float m_diffuseStrenght;
 		float m_specularStrenght;
 		int m_shininessLevel;
+
+		Cube m_Cube;
+		Floor m_Floor;
 	};
 }
