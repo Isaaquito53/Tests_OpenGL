@@ -20,6 +20,12 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - In the future I would like to add an object loader.
 
+- Add gravity based test.
+
+- Add XYZ axis lines.
+
+- Add CrossHair.
+
 ## What have I learned?:
 
 - I should always remember that OpenGL works as a state machine (glEnable/glDisable).

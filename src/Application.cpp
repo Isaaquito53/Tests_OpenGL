@@ -25,6 +25,7 @@
 #include "tests/TestTexture2D.h"
 #include "tests/TestSnake.h"
 #include "tests/TestGoing3D.h"
+#include "tests/TestGravity.h"
 
 int main(void)
 {
@@ -74,6 +75,7 @@ int main(void)
         testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
         testMenu->RegisterTest<test::TestSnake>("Snake");
         testMenu->RegisterTest<test::TestGoing3D>("Going 3D");
+        testMenu->RegisterTest<test::TestGravity>("Gravity");
 
         while (!glfwWindowShouldClose(window))
         {
