@@ -33,25 +33,40 @@ void Camera::IdleMovement(float delta)
 void Camera::Walk()
 {
 	m_camSpeed = 0.05f;
-	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_UpArrow)))
+	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_W)))
 	{
-		//std::cout << "Up" << std::endl;
-		m_camPos += m_camSpeed * m_camFront;
+		//std::cout << "W" << std::endl;
+		m_camPos += m_camSpeed * m_camFront * glm::vec3(1.0f, 0.0f, 1.0f);
 	}
-	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_DownArrow)))
+	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_S)))
 	{
-		//std::cout << "Down" << std::endl;
-		m_camPos -= m_camSpeed * m_camFront;
+		//std::cout << "S" << std::endl;
+		m_camPos -= m_camSpeed * m_camFront * glm::vec3(1.0f, 0.0f, 1.0f);
 	}
-	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftArrow)))
+	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_A)))
 	{
-		//std::cout << "Left" << std::endl;
+		//std::cout << "A" << std::endl;
 		m_camPos -= glm::normalize(glm::cross(m_camFront, m_camUp)) * m_camSpeed;
 	}
-	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_RightArrow)))
+	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_D)))
 	{
-		//std::cout << "Right" << std::endl;
+		//std::cout << "D" << std::endl;
 		m_camPos += glm::normalize(glm::cross(m_camFront, m_camUp)) * m_camSpeed;
+	}
+}
+
+void Camera::Fly()
+{
+	m_camSpeed = 0.05f;
+	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_Space)))
+	{
+		//std::cout << "Space" << std::endl;
+		m_camPos += m_camSpeed * glm::vec3(0.0f, 1.0f, 0.0f);
+	}
+	if (ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_Shift)))
+	{
+		//std::cout << "Space" << std::endl;
+		m_camPos -= m_camSpeed * glm::vec3(0.0f, 1.0f, 0.0f);
 	}
 }
 
@@ -80,9 +95,9 @@ void Camera::Look()
 			m_pitch = -89.0f;
 
 		m_camFront = glm::normalize(glm::vec3(
-			cos(glm::radians(m_yaw) * cos(glm::radians(m_pitch))),
+			cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch)),
 			sin(glm::radians(m_pitch)),
-			sin(glm::radians(m_yaw) * cos(glm::radians(m_pitch)))
+			sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch))
 		));
 	}
 	else
@@ -106,6 +121,7 @@ void Camera::UpdateCam(float delta)
 	else
 	{
 		Walk();
+		Fly();
 		Look();
 		m_camDirection = m_camPos + m_camFront;
 	}

@@ -1,0 +1,1 @@
+In this folder you can find some ImGui 1.60 files that I've modified to add some things like more keys in the KeyMap.

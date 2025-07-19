@@ -23,6 +23,7 @@ public:
 
 	void IdleMovement(float delta);
 	void Walk();
+	void Fly();
 	void Look();
 	void UpdateCam(float delta);
 };

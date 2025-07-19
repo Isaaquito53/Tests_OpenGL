@@ -26,7 +26,7 @@ namespace test {
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f))),
         m_textureShader(true), m_lastShader(true),
         m_ambientStrenght(0.1f), m_diffuseStrenght(1.0f), m_specularStrenght(0.5f), m_shininessLevel(5),
-        m_Texture("./res/textures/FreeSky.png")
+        m_Texture("./res/textures/FreeSky.png", WrappingRepeat)
     {
         // initialize dynamic content positions buffer
         for (unsigned int i = 0; i < MaxVertexCount; i++)

@@ -2,7 +2,7 @@
 
 #include "stb_image/stb_image.h"
 
-Texture::Texture(const std::string& path)
+Texture::Texture(const std::string& path, const Wrapping& wrap)
 	: m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), 
 	m_Width(0), m_Height(0), m_BPP(0)
 {
@@ -14,8 +14,28 @@ Texture::Texture(const std::string& path)
 	
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+	float borderColor[] = { 1.0f,1.0f,1.0f,1.0f };
+	switch (wrap)
+	{
+	case WrappingRepeat:
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+		break;
+	case WrappingMirrored:
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT));
+		break;
+	case WrappingClampEdge:
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+		break;
+	case WrappingClampBorder:
+		GLCall(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor));
+		break;
+	default:
+		break;
+	}
 
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
