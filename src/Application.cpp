@@ -41,7 +41,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -80,6 +80,10 @@ int main(void)
 
         while (!glfwWindowShouldClose(window))
         {
+            int width, height;
+            glfwGetWindowSize(window, &width, &height);
+            GLCall(glViewport(0, 0, width, height));
+
             GLCall(glClearColor(0.2f, 0.5f, 0.6f, 1.0f));
             renderer.Clear();
 

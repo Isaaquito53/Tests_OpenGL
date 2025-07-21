@@ -24,7 +24,7 @@ namespace test {
         m_ambientStrenght(0.1f), m_diffuseStrenght(1.0f), m_specularStrenght(0.5f), m_shininessLevel(5),
         m_Texture("./res/textures/FreeSky.png", WrappingClampEdge),
         m_TextureFloor("./res/textures/PS_Logo.png", WrappingRepeat),
-        m_Cube(10.0f), m_Floor(), m_Axis(),
+        m_Cube(0.6f, 5.0f), m_Floor(), m_Axis(),
         m_gravity(9.8f), m_step(1.0f), m_delta(0.0f)
     {
         // initialize index buffer
@@ -145,11 +145,15 @@ namespace test {
             renderer.DrawAxis();
         }
 
-        // Draw Cube
+        // Draw Cube1
         m_VertexBuffer->Bind(m_Cube.m_Vertices);
         m_Texture.Bind();
         {
-            m_Cube.m_xf = -(m_gravity / 2) * (m_delta * m_delta) + m_Cube.m_xf;
+            m_Cube.m_vf = m_Cube.m_vf - m_gravity * m_delta;
+            unsigned int goingUp = 1;
+            if (m_Cube.m_vf <= 0.0f)
+                goingUp = 0;
+            m_Cube.m_xf = -(m_gravity / 2) * (m_delta * m_delta) + m_Cube.m_vf * m_delta * goingUp + m_Cube.m_xf;
 
             // update model, projection and view matrices
             glm::mat4 model = glm::mat4(1.0f);
@@ -159,6 +163,7 @@ namespace test {
             {
                 model = glm::translate(model, glm::vec3(-5.0f, m_Cube.m_xi, -5.0f));
                 m_Cube.m_xf = m_Cube.m_xi;
+                m_Cube.m_vf = m_Cube.m_vi;
                 m_delta = 0.0f;
             }
 
@@ -226,21 +231,46 @@ namespace test {
 
     void TestGravity::OnImGuiRender()
     {
-        ImGui::Text("SCENE PARAMETERS:");
-        ImGui::SliderFloat("Cube Y Pos", &m_Cube.m_xi, 0.0f, 50.0f);
-        ImGui::Text("CAM PARAMETERS:");
-        ImGui::SliderFloat("Sensitivity", &m_cam.m_sensitivity, 0.1f, 2.0f);
-        ImGui::Checkbox("FPS Mode", &m_cam.m_FPSMode);
-        ImGui::Text("TEXTURE PARAMETERS:");
-        ImGui::Checkbox("Texture Shader", &m_textureShader);
-        ImGui::Text("LIGHT PARAMETERS:");
-        ImGui::SliderFloat("Ambient", &m_ambientStrenght, 0.0f, 1.0f);
-        ImGui::SliderFloat("Diffuse", &m_diffuseStrenght, 0.0f, 1.0f);
-        ImGui::SliderFloat("Specular", &m_specularStrenght, 0.0f, 1.0f);
-        ImGui::SliderInt("Specular shineness level", &m_shininessLevel, 0, 8);
-        ImGui::Text("CAM COORDS:");
-        ImGui::Text("Cam position: x: %.3f, y: %.3f, z: %.3f", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
-        ImGui::Text("Cam looking at: x: %.3f, y: %.3f, z: %.3f", m_cam.m_camFront.x, m_cam.m_camFront.y, m_cam.m_camFront.z);
+        if (ImGui::TreeNode("SCENE PARAMETERS:"))
+        {
+            ImGui::SliderFloat("Cube initial Y Pos", &m_Cube.m_xi, 0.0f, 50.0f);
+            ImGui::Text("Current Cube Y Pos: %.3f", m_Cube.m_xf);
+            ImGui::SliderFloat("Cube initial Y Velocity", &m_Cube.m_vi, 0.0f, 50.0f);
+            ImGui::Text("Current Cube Y Velocity: %.3f", m_Cube.m_vf);
+            ImGui::TreePop();
+        }
+
+        if(ImGui::TreeNode("CAM PARAMETERS:"))
+        {
+            ImGui::SliderFloat("Sensitivity", &m_cam.m_sensitivity, 0.1f, 2.0f);
+            ImGui::Checkbox("FPS Mode", &m_cam.m_FPSMode);
+            ImGui::Checkbox("Survival FPS Mode", &m_cam.m_SurvivalMode);
+
+            if (ImGui::TreeNode("CAM COORDS:"))
+            {
+                ImGui::Text("Cam position: x: %.3f, y: %.3f, z: %.3f", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
+                ImGui::Text("Cam looking at: x: %.3f, y: %.3f, z: %.3f", m_cam.m_camDirection.x, m_cam.m_camDirection.y, m_cam.m_camDirection.z);
+                ImGui::TreePop();
+            }
+
+            ImGui::TreePop();
+        }
+
+        if(ImGui::TreeNode("TEXTURE PARAMETERS:"))
+        {
+            ImGui::Checkbox("Texture Shader", &m_textureShader);
+            ImGui::TreePop();
+        }
+
+        if(ImGui::TreeNode("LIGHT PARAMETERS:"))
+        {
+            ImGui::SliderFloat("Ambient", &m_ambientStrenght, 0.0f, 1.0f);
+            ImGui::SliderFloat("Diffuse", &m_diffuseStrenght, 0.0f, 1.0f);
+            ImGui::SliderFloat("Specular", &m_specularStrenght, 0.0f, 1.0f);
+            ImGui::SliderInt("Specular shineness level", &m_shininessLevel, 0, 8);
+            ImGui::TreePop();
+        }
+
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
 }

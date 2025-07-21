@@ -7,11 +7,13 @@
 #include <GLFW/glfw3.h>
 
 Camera::Camera()
-	: m_FPSMode(true), m_FPSModeLast(true), m_camSpeed(5.0f),
+	: m_FPSMode(true), m_FPSModeLast(true), m_SurvivalMode(false),
+	m_camSpeed(5.0f),
 	m_camPos(glm::vec3(0.0f, 0.0f, 3.0f)), m_camDirection(glm::vec3(0.0f, 0.0f, 0.0f)), m_camUp(glm::vec3(0.0f, 1.0f, 0.0f)),
-	m_camFront(glm::vec3(0.0f, 0.0f, -1.0f)), 
+	m_camFront(glm::vec3(0.0f, 0.0f, -1.0f)),
 	m_yaw(-90.0f), m_pitch(0.0f),
-	m_lastLook(glm::vec2(960/2, 540/2)), m_sensitivity(1.0f)
+	m_lastLook(glm::vec2(960 / 2, 540 / 2)), m_sensitivity(1.0f),
+	m_x(1.0f), m_v(0.0f), m_goingUp(0), m_gravity(9.8f), m_jumping(false), m_delta(0.0f)
 {
 }
 
@@ -53,6 +55,38 @@ void Camera::Walk()
 		//std::cout << "D" << std::endl;
 		m_camPos += glm::normalize(glm::cross(m_camFront, m_camUp)) * m_camSpeed;
 	}
+}
+
+void Camera::Jump()
+{
+	if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Space)) && m_camPos.y == 1.0f)
+	{
+		m_v = 7.5f;
+		m_goingUp = 1;
+		m_jumping = true;
+	}
+	if (m_jumping)
+	{
+		m_delta += 1 / 500.0f;
+		if (m_goingUp)
+		{
+			m_v = m_v - m_gravity * m_delta;
+			if (m_v <= 0.0f)
+			{
+				m_goingUp = 0;
+				m_v = 0.0f;
+			}
+		}
+		m_x = -(m_gravity / 2) * (m_delta * m_delta) + m_v * m_delta * m_goingUp + m_x;
+		if (m_x <= 1.0f)
+		{
+			m_jumping = false;
+			m_x = 1.0f;
+			m_delta = 0.0f;
+		}
+	}
+
+	m_camPos.y = m_x;
 }
 
 void Camera::Fly()
@@ -101,7 +135,7 @@ void Camera::Look()
 		));
 	}
 	else
-		m_lastLook = glm::vec2(960 / 2, 540 / 2);
+		m_lastLook = glm::vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
 }
 
 void Camera::UpdateCam(float delta)
@@ -121,7 +155,10 @@ void Camera::UpdateCam(float delta)
 	else
 	{
 		Walk();
-		Fly();
+		if (m_SurvivalMode)
+			Jump();
+		else
+			Fly();
 		Look();
 		m_camDirection = m_camPos + m_camFront;
 	}

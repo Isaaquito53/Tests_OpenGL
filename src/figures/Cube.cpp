@@ -143,10 +143,12 @@ Cube::Cube()
     buffer++;
 }
 
-Cube::Cube(float xi)
+Cube::Cube(float xi, float vi)
 {
     m_xi = xi;
     m_xf = xi;
+    m_vi = vi;
+    m_vf = vi;
     m_nVertices = 8;
     Vec3 positions[8];
     positions[0] = { -0.5f, -0.5f, -0.5f }; // 1

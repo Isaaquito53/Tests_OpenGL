@@ -16,11 +16,9 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 ## To Do/Fix:
 
-- Add gravity based test.
-
 - Add Material/light map shader.
 
-- Now I am trying to learn and understand the basics of Lights, so probably, I will be adding some Lights features to the Going3D test soon (probably, it isn't going to be the last thing that I will add to this test).
+- Add collision test.
 
 - In the future I would like to add an object loader.
 
@@ -31,6 +29,8 @@ Some simple test don't use batch rendering because are so simple that this featu
 - How to add controls to ImGui.
 
 - How to implement simple gravity sistem.
+
+- How to implement Phong light shader
 
 ## Credits/References:
 
