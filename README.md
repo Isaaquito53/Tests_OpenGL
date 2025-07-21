@@ -16,19 +16,21 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 ## To Do/Fix:
 
+- Add gravity based test.
+
+- Add Material/light map shader.
+
 - Now I am trying to learn and understand the basics of Lights, so probably, I will be adding some Lights features to the Going3D test soon (probably, it isn't going to be the last thing that I will add to this test).
 
 - In the future I would like to add an object loader.
 
-- Add gravity based test.
-
-- Add XYZ axis lines.
-
-- Add CrossHair.
-
 ## What have I learned?:
 
 - I should always remember that OpenGL works as a state machine (glEnable/glDisable).
+
+- How to add controls to ImGui.
+
+- How to implement simple gravity sistem.
 
 ## Credits/References:
 

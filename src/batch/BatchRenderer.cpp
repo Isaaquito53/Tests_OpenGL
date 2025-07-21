@@ -30,3 +30,8 @@ void BatchRenderer::Draw(const BatchVertexArray& va, const BatchIndexBuffer& ib,
     ib.Bind();
     GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 }
+
+void BatchRenderer::DrawAxis() const
+{
+    GLCall(glDrawArrays(GL_LINES, 0, 6));
+}

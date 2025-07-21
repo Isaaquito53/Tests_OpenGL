@@ -30,6 +30,7 @@
 int main(void)
 {
     GLFWwindow* window;
+    float delta, lastFrame = 0.0f, currentFrame = 0.0f;
 
     /* Initialize the library */
     if (!glfwInit())
@@ -85,7 +86,10 @@ int main(void)
             ImGui_ImplGlfwGL3_NewFrame();
             if (currentTest)
             {
-                currentTest->OnUpdate(0.0f);
+                currentFrame = glfwGetTime();
+                delta = currentFrame - lastFrame;
+                lastFrame = currentFrame;
+                currentTest->OnUpdate(delta);
                 currentTest->OnRender();
                 ImGui::Begin("Test");
                 if (currentTest != testMenu && ImGui::Button("<-"))

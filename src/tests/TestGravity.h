@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "figures/Cube.h"
 #include "figures/Floor.h"
+#include "figures/Axis.h"
 
 #include <memory>
 
@@ -31,6 +32,7 @@ namespace test {
 		std::unique_ptr<BatchIndexBuffer> m_IndexBuffer;
 		std::unique_ptr<Shader> m_Shader;
 		std::unique_ptr<Shader> m_ShaderLight;
+		std::unique_ptr<Shader> m_ShaderAxis;
 		// Shader vars
 		bool m_textureShader;
 		bool m_lastShader;
@@ -49,6 +51,7 @@ namespace test {
 		// Objects
 		Cube m_Cube;
 		Floor m_Floor;
+		Axis m_Axis;
 		// Scene vars
 		float m_gravity;
 		float m_step;

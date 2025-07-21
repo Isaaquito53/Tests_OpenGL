@@ -24,7 +24,7 @@ namespace test {
         m_ambientStrenght(0.1f), m_diffuseStrenght(1.0f), m_specularStrenght(0.5f), m_shininessLevel(5),
         m_Texture("./res/textures/FreeSky.png", WrappingClampEdge),
         m_TextureFloor("./res/textures/PS_Logo.png", WrappingRepeat),
-        m_Cube(10.0f), m_Floor(),
+        m_Cube(10.0f), m_Floor(), m_Axis(),
         m_gravity(9.8f), m_step(1.0f), m_delta(0.0f)
     {
         // initialize index buffer
@@ -51,10 +51,10 @@ namespace test {
         m_VAO = std::make_unique<BatchVertexArray>();
         m_VertexBuffer = std::make_unique<BatchVertexBuffer>(MaxVertexCount);
         BatchVertexBufferLayout layout;
-        layout.Push<float>(3);
-        layout.Push<float>(4);
-        layout.Push<float>(2);
-        layout.Push<float>(3);
+        layout.Push<float>(3); // Pos
+        layout.Push<float>(4); // Color
+        layout.Push<float>(2); // TexCoords
+        layout.Push<float>(3); // Norm
         m_VAO->AddBuffer(*m_VertexBuffer, layout);
 
         // IBO stuff
@@ -71,6 +71,10 @@ namespace test {
         m_ShaderLight = std::make_unique<Shader>("./res/shaders/LightGoing3D.shader");
         Shader shader();
         m_ShaderLight->Bind();
+
+        m_ShaderAxis = std::make_unique<Shader>("./res/shaders/OnlyColor.shader");
+        Shader shader();
+        m_ShaderAxis->Bind();
     }
 
     TestGravity::~TestGravity()
@@ -110,6 +114,7 @@ namespace test {
 
     void TestGravity::OnUpdate(float deltaTime)
     {
+        m_cam.UpdateCam(deltaTime);
     }
 
     void TestGravity::OnRender()
@@ -125,19 +130,34 @@ namespace test {
         m_cam.UpdateCam(m_delta);
         m_View = glm::lookAt(m_cam.m_camPos, m_cam.m_camDirection, m_cam.m_camUp);
 
+        // Draw Axis
+        m_VertexBuffer->Bind(m_Axis.m_Vertices);
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::scale(model, glm::vec3(5.0f));
+
+            glm::mat4 mvp = m_Proj * m_View * model;
+            m_ShaderAxis->Bind();
+            m_ShaderAxis->SetUniformMat4f("u_MVP", mvp);
+
+            m_VAO->Bind();
+
+            renderer.DrawAxis();
+        }
+
+        // Draw Cube
         m_VertexBuffer->Bind(m_Cube.m_Vertices);
         m_Texture.Bind();
-        // Draw Cube
         {
             m_Cube.m_xf = -(m_gravity / 2) * (m_delta * m_delta) + m_Cube.m_xf;
 
             // update model, projection and view matrices
             glm::mat4 model = glm::mat4(1.0f);
             if (m_Cube.m_xf >= 0.5f)
-                model = glm::translate(model, glm::vec3(0.0f, m_Cube.m_xf, 0.0f));
+                model = glm::translate(model, glm::vec3(-5.0f, m_Cube.m_xf, -5.0f));
             else
             {
-                model = glm::translate(model, glm::vec3(0.0f, m_Cube.m_xi, 0.0f));
+                model = glm::translate(model, glm::vec3(-5.0f, m_Cube.m_xi, -5.0f));
                 m_Cube.m_xf = m_Cube.m_xi;
                 m_delta = 0.0f;
             }
@@ -181,6 +201,7 @@ namespace test {
         {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(10.0f));
 
             glm::mat4 mvp = m_Proj * m_View * model;
             m_Shader->Bind();

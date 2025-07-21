@@ -19,4 +19,5 @@ class BatchRenderer
 public:
 	void Clear() const;
 	void Draw(const BatchVertexArray& va, const BatchIndexBuffer& ib, const Shader& shader) const;
+	void DrawAxis() const;
 };
