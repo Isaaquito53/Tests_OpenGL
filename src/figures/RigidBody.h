@@ -20,6 +20,8 @@ public:
 	float& GetVYi() { return m_vyi; };
 	float GetVYf() { return m_vyf; };
 
+	void SetYi(float yi) { m_yi = yi; };
+
 private:
 	Figure *m_fig;
 	float m_yi;

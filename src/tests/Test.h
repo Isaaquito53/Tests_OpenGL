@@ -16,6 +16,7 @@ namespace test {
 		virtual void OnUpdate(float deltaTime) {}
 		virtual void OnRender() {}
 		virtual void OnImGuiRender() {}
+		virtual void OnPickingObjects(int width, int height) {}
 	};
 
 	class TestMenu : public Test

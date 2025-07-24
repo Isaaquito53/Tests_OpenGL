@@ -16,8 +16,6 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 ## To Do/Fix:
 
-- Drag & Drop system.
-
 - Add collision test.
 
 - In the future I would like to add an object loader.
@@ -30,11 +28,13 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - How to change keyMap of ImGui.
 
-- How to implement simple gravity sistem.
+- How to implement simple gravity system.
 
 - How to implement Phong light shader.
 
 - How to implement Materials and lighting maps with shaders.
+
+- How to implement a picking objects system
 
 ## Credits/References:
 

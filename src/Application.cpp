@@ -109,6 +109,8 @@ int main(void)
 
             glfwSwapBuffers(window);
 
+            currentTest->OnPickingObjects(width, height);
+
             glfwPollEvents();
         }
         delete currentTest;

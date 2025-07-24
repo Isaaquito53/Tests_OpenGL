@@ -64,9 +64,8 @@ namespace test {
         // IBO stuff
         m_IndexBuffer = std::make_unique<BatchIndexBuffer>(indices, MaxIndexCount);
 
-        // Shaders stuff
+        // Main Shaders stuff
         m_Shader = std::make_unique<Shader>("./res/shaders/Material.shader");
-        Shader shader();
         m_Shader->Bind();
 
         // setting up some uniforms
@@ -74,13 +73,17 @@ namespace test {
         m_Shader->SetUniform1i("material.diffuse", 2); // 2 is the slot
         m_Shader->SetUniform1i("material.specular", 3); // 3 is the slot
 
+        // Light Shader stuff
         m_ShaderLight = std::make_unique<Shader>("./res/shaders/LightGoing3D.shader");
-        Shader shader();
         m_ShaderLight->Bind();
 
+        // Axis Shader stuff
         m_ShaderAxis = std::make_unique<Shader>("./res/shaders/OnlyColor.shader");
-        Shader shader();
         m_ShaderAxis->Bind();
+
+        // Picking objects Shader stuff
+        m_ShaderPicking = std::make_unique<Shader>("./res/shaders/Picking.shader");
+        m_ShaderPicking->Bind();
     }
 
     TestGravity::~TestGravity()
@@ -283,5 +286,70 @@ namespace test {
         }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    }
+
+    void TestGravity::OnPickingObjects(int width, int height)
+    {
+        Vec4 cubeColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+        Vec4 lightColor = { 0.9f, 0.0f, 0.0f, 1.0f };
+
+        GLCall(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+        GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+        BatchRenderer renderer;
+
+        m_View = glm::lookAt(m_cam.m_camPos, m_cam.m_camDirection, m_cam.m_camUp);
+
+        // Draw Cube1
+        m_VertexBuffer->Bind(m_RBody.GetFigure().m_Vertices);
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(-5.0f, m_RBody.ActGravityY(), -5.0f));
+
+            glm::mat4 mvp = m_Proj * m_View * model;
+            m_ShaderPicking->Bind();
+            m_ShaderPicking->SetUniformMat4f("u_MVP", mvp);
+            m_ShaderPicking->SetUniform4f("u_Color", cubeColor.r, cubeColor.g, cubeColor.b, cubeColor.a);
+
+            m_VAO->Bind();
+
+            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_ShaderPicking);
+        }
+
+        // Draw Light Cube
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(1.2f, 2.0f, 2.0f));
+            model = glm::scale(model, glm::vec3(0.2f));
+
+            glm::mat4 mvp = m_Proj * m_View * model;
+            m_ShaderPicking->Bind();
+            m_ShaderPicking->SetUniformMat4f("u_MVP", mvp);
+            m_ShaderPicking->SetUniform4f("u_Color", lightColor.r, lightColor.g, lightColor.b, lightColor.a);
+
+            m_VAO->Bind();
+
+            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_ShaderPicking);
+        }
+
+        if (ImGui::IsMouseClicked(0))
+        {
+            GLfloat pixel;
+            GLint x_coord = ImGui::GetIO().MousePos.x;
+            GLint y_coord = height - ImGui::GetIO().MousePos.y;
+
+            GLCall(glReadPixels(x_coord, y_coord, 1, 1, GL_RED, GL_FLOAT, &pixel));
+            //std::cout << "Pixel value: " << pixel << std::endl;
+
+            if (pixel >= cubeColor.r)
+            {
+                m_RBody.SetYi(0.0f);
+            }
+            else if (pixel <= lightColor.r + 0.01f && pixel >= lightColor.r - 0.01f)
+            {
+                m_diffuseStrenght = ((int)m_diffuseStrenght + 1) % 2;
+                m_specularStrenght = ((int)m_specularStrenght + 1) % 2;
+            }
+        }
     }
 }

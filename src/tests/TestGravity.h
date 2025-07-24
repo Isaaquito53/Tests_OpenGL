@@ -26,6 +26,7 @@ namespace test {
 		void OnUpdate(float deltaTime) override;
 		void OnRender() override;
 		void OnImGuiRender() override;
+		void OnPickingObjects(int width, int height) override;
 	private:
 		// Render vars
 		std::unique_ptr<BatchVertexArray> m_VAO;
@@ -34,6 +35,7 @@ namespace test {
 		std::unique_ptr<Shader> m_Shader;
 		std::unique_ptr<Shader> m_ShaderLight;
 		std::unique_ptr<Shader> m_ShaderAxis;
+		std::unique_ptr<Shader> m_ShaderPicking;
 		// Shader vars
 		bool m_textureShader;
 		bool m_lastShader;
