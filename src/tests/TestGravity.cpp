@@ -101,7 +101,7 @@ namespace test {
         if (!m_textureShader)
         {
             // Shaders stuff
-            m_Shader = std::make_unique<Shader>("./res/shaders/Going3D.shader");
+            m_Shader = std::make_unique<Shader>("./res/shaders/Cel.shader");
             Shader shader();
             m_Shader->Bind();
 

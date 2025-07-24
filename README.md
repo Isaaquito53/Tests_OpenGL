@@ -18,6 +18,8 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - Add collision test.
 
+- Add newton physics.
+
 - In the future I would like to add an object loader.
 
 ## What have I learned?:
