@@ -6,6 +6,7 @@
 #include "batch/BatchVertexBufferLayout.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "figures/RigidBody.h"
 #include "figures/Cube.h"
 #include "figures/Floor.h"
 #include "figures/Axis.h"
@@ -39,6 +40,8 @@ namespace test {
 		// Texture vars
 		Texture m_Texture;
 		Texture m_TextureFloor;
+		Texture m_diffuseMap;
+		Texture m_specularMap;
 		// Transform mat vars
 		glm::mat4 m_Proj, m_View;
 		// Cam vars
@@ -52,6 +55,7 @@ namespace test {
 		Cube m_Cube;
 		Floor m_Floor;
 		Axis m_Axis;
+		RigidBody m_RBody;
 		// Scene vars
 		float m_gravity;
 		float m_step;

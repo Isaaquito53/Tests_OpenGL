@@ -38,8 +38,3 @@ Floor::~Floor()
 {
 
 }
-
-void Floor::GetIndices(unsigned int indices[])
-{
-
-}

@@ -16,7 +16,7 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 ## To Do/Fix:
 
-- Add Material/light map shader.
+- Drag & Drop system.
 
 - Add collision test.
 
@@ -28,9 +28,13 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - How to add controls to ImGui.
 
+- How to change keyMap of ImGui.
+
 - How to implement simple gravity sistem.
 
-- How to implement Phong light shader
+- How to implement Phong light shader.
+
+- How to implement Materials and lighting maps with shaders.
 
 ## Credits/References:
 

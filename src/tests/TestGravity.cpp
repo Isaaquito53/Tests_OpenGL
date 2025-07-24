@@ -24,9 +24,13 @@ namespace test {
         m_ambientStrenght(0.1f), m_diffuseStrenght(1.0f), m_specularStrenght(0.5f), m_shininessLevel(5),
         m_Texture("./res/textures/FreeSky.png", WrappingClampEdge),
         m_TextureFloor("./res/textures/PS_Logo.png", WrappingRepeat),
-        m_Cube(0.6f, 5.0f), m_Floor(), m_Axis(),
+        m_diffuseMap("./res/textures/container2.png", WrappingRepeat),
+        m_specularMap("./res/textures/container2_specular.png", WrappingRepeat),
+        m_Cube(), m_Floor(), m_Axis(), m_RBody(&m_Cube, 0.5f, 0.0f),
         m_gravity(9.8f), m_step(1.0f), m_delta(0.0f)
     {
+        m_RBody.ApplyVerticalVelocity(10.0f);
+
         // initialize index buffer
         unsigned int offset = 0;
         unsigned int indices[MaxIndexCount];
@@ -61,12 +65,14 @@ namespace test {
         m_IndexBuffer = std::make_unique<BatchIndexBuffer>(indices, MaxIndexCount);
 
         // Shaders stuff
-        m_Shader = std::make_unique<Shader>("./res/shaders/Going3DTexture.shader");
+        m_Shader = std::make_unique<Shader>("./res/shaders/Material.shader");
         Shader shader();
         m_Shader->Bind();
 
         // setting up some uniforms
-        m_Shader->SetUniform1i("u_Texture", 0); // 0 is the slot
+        m_Shader->SetUniform3f("light.position", 1.2f, 1.0f, 2.0f);
+        m_Shader->SetUniform1i("material.diffuse", 2); // 2 is the slot
+        m_Shader->SetUniform1i("material.specular", 3); // 3 is the slot
 
         m_ShaderLight = std::make_unique<Shader>("./res/shaders/LightGoing3D.shader");
         Shader shader();
@@ -102,12 +108,14 @@ namespace test {
         else
         {
             // Shaders stuff
-            m_Shader = std::make_unique<Shader>("./res/shaders/Going3DTexture.shader");
+            m_Shader = std::make_unique<Shader>("./res/shaders/Material.shader");
             Shader shader();
             m_Shader->Bind();
 
             // setting up some uniforms
-            m_Shader->SetUniform1i("u_Texture", 0); // 0 is the slot
+            m_Shader->SetUniform3f("light.position", 1.2f, 1.0f, 2.0f);
+            m_Shader->SetUniform1i("material.diffuse", 2); // 2 is the slot
+            m_Shader->SetUniform1i("material.specular", 3); // 3 is the slot
         }
         m_lastShader = m_textureShader;
     }
@@ -127,7 +135,6 @@ namespace test {
         if (m_lastShader != m_textureShader)
             ChangeShader();
 
-        m_cam.UpdateCam(m_delta);
         m_View = glm::lookAt(m_cam.m_camPos, m_cam.m_camDirection, m_cam.m_camUp);
 
         // Draw Axis
@@ -146,39 +153,34 @@ namespace test {
         }
 
         // Draw Cube1
-        m_VertexBuffer->Bind(m_Cube.m_Vertices);
-        m_Texture.Bind();
+        m_VertexBuffer->Bind(m_RBody.GetFigure().m_Vertices);
         {
-            m_Cube.m_vf = m_Cube.m_vf - m_gravity * m_delta;
-            unsigned int goingUp = 1;
-            if (m_Cube.m_vf <= 0.0f)
-                goingUp = 0;
-            m_Cube.m_xf = -(m_gravity / 2) * (m_delta * m_delta) + m_Cube.m_vf * m_delta * goingUp + m_Cube.m_xf;
-
             // update model, projection and view matrices
             glm::mat4 model = glm::mat4(1.0f);
-            if (m_Cube.m_xf >= 0.5f)
-                model = glm::translate(model, glm::vec3(-5.0f, m_Cube.m_xf, -5.0f));
-            else
-            {
-                model = glm::translate(model, glm::vec3(-5.0f, m_Cube.m_xi, -5.0f));
-                m_Cube.m_xf = m_Cube.m_xi;
-                m_Cube.m_vf = m_Cube.m_vi;
-                m_delta = 0.0f;
-            }
+            model = glm::translate(model, glm::vec3(-5.0f, m_RBody.ActGravityY(), -5.0f));
 
             glm::mat4 mvp = m_Proj * m_View * model;
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
             m_Shader->SetUniformMat4f("u_Model", model);
+            m_Shader->SetUniform3f("u_viewPos", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
             if (!m_textureShader)
             {
-                m_Shader->SetUniform3f("u_viewPos", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
                 m_Shader->SetUniform1f("u_ambientStrenght", m_ambientStrenght);
                 m_Shader->SetUniform1f("u_diffuseStrenght", m_diffuseStrenght);
                 m_Shader->SetUniform1f("u_specularStrenght", m_specularStrenght);
                 m_Shader->SetUniform1f("u_shininess", pow(2, m_shininessLevel));
             }
+            else
+            {
+                m_Shader->SetUniform3f("light.ambient", m_ambientStrenght, m_ambientStrenght, m_ambientStrenght);
+                m_Shader->SetUniform3f("light.diffuse", m_diffuseStrenght, m_diffuseStrenght, m_diffuseStrenght);
+                m_Shader->SetUniform3f("light.specular", m_specularStrenght, m_specularStrenght, m_specularStrenght);
+                m_Shader->SetUniform1f("material.shininess", pow(2, m_shininessLevel));
+            }
+
+            m_diffuseMap.Bind(2);
+            m_specularMap.Bind(3);
 
             m_VAO->Bind();
 
@@ -202,7 +204,6 @@ namespace test {
 
         // Draw Floor
         m_VertexBuffer->Bind(m_Floor.m_Vertices);
-        m_TextureFloor.Bind();
         {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -212,14 +213,24 @@ namespace test {
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
             m_Shader->SetUniformMat4f("u_Model", model);
+            m_Shader->SetUniform3f("u_viewPos", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
             if (!m_textureShader)
             {
-                m_Shader->SetUniform3f("u_viewPos", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
                 m_Shader->SetUniform1f("u_ambientStrenght", m_ambientStrenght);
                 m_Shader->SetUniform1f("u_diffuseStrenght", m_diffuseStrenght);
                 m_Shader->SetUniform1f("u_specularStrenght", m_specularStrenght);
                 m_Shader->SetUniform1f("u_shininess", pow(2, m_shininessLevel));
             }
+            else
+            {
+                m_Shader->SetUniform3f("light.ambient", m_ambientStrenght, m_ambientStrenght, m_ambientStrenght);
+                m_Shader->SetUniform3f("light.diffuse", m_diffuseStrenght, m_diffuseStrenght, m_diffuseStrenght);
+                m_Shader->SetUniform3f("light.specular", m_specularStrenght, m_specularStrenght, m_specularStrenght);
+                m_Shader->SetUniform1f("material.shininess", pow(2, m_shininessLevel));
+            }
+
+            m_diffuseMap.Bind(2);
+            m_specularMap.Bind(3);
 
             m_VAO->Bind();
 
@@ -233,10 +244,10 @@ namespace test {
     {
         if (ImGui::TreeNode("SCENE PARAMETERS:"))
         {
-            ImGui::SliderFloat("Cube initial Y Pos", &m_Cube.m_xi, 0.0f, 50.0f);
-            ImGui::Text("Current Cube Y Pos: %.3f", m_Cube.m_xf);
-            ImGui::SliderFloat("Cube initial Y Velocity", &m_Cube.m_vi, 0.0f, 50.0f);
-            ImGui::Text("Current Cube Y Velocity: %.3f", m_Cube.m_vf);
+            ImGui::SliderFloat("Cube initial Y Pos", &m_RBody.GetYi(), 0.0f, 50.0f);
+            ImGui::Text("Current Cube Y Pos: %.3f", m_RBody.GetYf());
+            ImGui::SliderFloat("Cube initial Y Velocity", &m_RBody.GetVYi(), 0.0f, 50.0f);
+            ImGui::Text("Current Cube Y Velocity: %.3f", m_RBody.GetVYf());
             ImGui::TreePop();
         }
 

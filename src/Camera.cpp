@@ -61,7 +61,7 @@ void Camera::Jump()
 {
 	if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Space)) && m_camPos.y == 1.0f)
 	{
-		m_v = 7.5f;
+		m_v = 6.0f;
 		m_goingUp = 1;
 		m_jumping = true;
 	}
