@@ -57,10 +57,12 @@ namespace test {
 		Cube m_Cube;
 		Floor m_Floor;
 		Axis m_Axis;
-		RigidBody m_RBody;
+		RigidBody m_RBody1;
+		RigidBody m_RBody2;
 		// Scene vars
 		float m_gravity;
 		float m_step;
 		float m_delta;
+		bool m_play;
 	};
 }

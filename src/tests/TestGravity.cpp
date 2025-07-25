@@ -26,10 +26,12 @@ namespace test {
         m_TextureFloor("./res/textures/PS_Logo.png", WrappingRepeat),
         m_diffuseMap("./res/textures/container2.png", WrappingRepeat),
         m_specularMap("./res/textures/container2_specular.png", WrappingRepeat),
-        m_Cube(), m_Floor(), m_Axis(), m_RBody(&m_Cube, 0.5f, 0.0f),
-        m_gravity(9.8f), m_step(1.0f), m_delta(0.0f)
+        m_Cube(), m_Floor(), m_Axis(), 
+        m_RBody1(&m_Cube, -5.0f, 0.5f, -5.0f, 0.0f), m_RBody2(&m_Cube, -5.0f, 2.0f, -5.0f, 0.0f),
+        m_gravity(9.8f), m_step(1.0f), m_delta(0.0f), m_play(false)
     {
-        m_RBody.ApplyVerticalVelocity(10.0f);
+        m_RBody1.ApplyVerticalVelocity(0.0f);
+        m_RBody2.ApplyVerticalVelocity(0.0f);
 
         // initialize index buffer
         unsigned int offset = 0;
@@ -156,11 +158,14 @@ namespace test {
         }
 
         // Draw Cube1
-        m_VertexBuffer->Bind(m_RBody.GetFigure().m_Vertices);
+        m_VertexBuffer->Bind(m_RBody1.GetFigure().m_Vertices);
         {
             // update model, projection and view matrices
+            if (m_play)
+                m_RBody1.UpdateCoords(10.0f);
+
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(-5.0f, m_RBody.ActGravityY(), -5.0f));
+            model = glm::translate(model, glm::vec3(m_RBody1.GetXi(), m_RBody1.GetYf(), m_RBody1.GetZi()));
 
             glm::mat4 mvp = m_Proj * m_View * model;
             m_Shader->Bind();
@@ -188,6 +193,54 @@ namespace test {
             m_VAO->Bind();
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+        }
+
+        // Draw Cube2
+        m_VertexBuffer->Bind(m_RBody2.GetFigure().m_Vertices);
+        {
+            // update model, projection and view matrices
+            if (m_play)
+                m_RBody2.UpdateCoords(10.0f);
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(m_RBody2.GetXi(), m_RBody2.GetYf(), m_RBody2.GetZi()));
+
+            glm::mat4 mvp = m_Proj * m_View * model;
+            m_Shader->Bind();
+            m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_Shader->SetUniformMat4f("u_Model", model);
+            m_Shader->SetUniform3f("u_viewPos", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
+            if (!m_textureShader)
+            {
+                m_Shader->SetUniform1f("u_ambientStrenght", m_ambientStrenght);
+                m_Shader->SetUniform1f("u_diffuseStrenght", m_diffuseStrenght);
+                m_Shader->SetUniform1f("u_specularStrenght", m_specularStrenght);
+                m_Shader->SetUniform1f("u_shininess", pow(2, m_shininessLevel));
+            }
+            else
+            {
+                m_Shader->SetUniform3f("light.ambient", m_ambientStrenght, m_ambientStrenght, m_ambientStrenght);
+                m_Shader->SetUniform3f("light.diffuse", m_diffuseStrenght, m_diffuseStrenght, m_diffuseStrenght);
+                m_Shader->SetUniform3f("light.specular", m_specularStrenght, m_specularStrenght, m_specularStrenght);
+                m_Shader->SetUniform1f("material.shininess", pow(2, m_shininessLevel));
+            }
+
+            m_diffuseMap.Bind(2);
+            m_specularMap.Bind(3);
+
+            m_VAO->Bind();
+
+            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+        }
+
+        float dist = glm::distance(glm::vec3(m_RBody1.GetXi(), m_RBody1.GetYf(), m_RBody1.GetZi()),
+            glm::vec3(m_RBody2.GetXi(), m_RBody2.GetYf(), m_RBody2.GetZi()));
+
+        if (dist <= m_RBody1.GetR()*2)
+        {
+            m_RBody1.m_onAir = false;
+            m_RBody2.m_onAir = false;
+            //std::cout << "Touché" << std::endl;
         }
 
         // Draw Light Cube
@@ -247,10 +300,11 @@ namespace test {
     {
         if (ImGui::TreeNode("SCENE PARAMETERS:"))
         {
-            ImGui::SliderFloat("Cube initial Y Pos", &m_RBody.GetYi(), 0.0f, 50.0f);
-            ImGui::Text("Current Cube Y Pos: %.3f", m_RBody.GetYf());
-            ImGui::SliderFloat("Cube initial Y Velocity", &m_RBody.GetVYi(), 0.0f, 50.0f);
-            ImGui::Text("Current Cube Y Velocity: %.3f", m_RBody.GetVYf());
+            ImGui::Checkbox("Play/Pause", &m_play);
+            ImGui::SliderFloat("Cube initial Y Pos", &m_RBody1.GetYi(), 0.0f, 50.0f);
+            ImGui::Text("Current Cube Y Pos: %.3f", m_RBody1.GetYf());
+            ImGui::SliderFloat("Cube initial Y Velocity", &m_RBody1.GetVYi(), 0.0f, 50.0f);
+            ImGui::Text("Current Cube Y Velocity: %.3f", m_RBody1.GetVYf());
             ImGui::TreePop();
         }
 
@@ -301,10 +355,10 @@ namespace test {
         m_View = glm::lookAt(m_cam.m_camPos, m_cam.m_camDirection, m_cam.m_camUp);
 
         // Draw Cube1
-        m_VertexBuffer->Bind(m_RBody.GetFigure().m_Vertices);
+        m_VertexBuffer->Bind(m_RBody1.GetFigure().m_Vertices);
         {
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(-5.0f, m_RBody.ActGravityY(), -5.0f));
+            model = glm::translate(model, glm::vec3(m_RBody1.GetXi(), m_RBody1.GetYf(), -5.0f));
 
             glm::mat4 mvp = m_Proj * m_View * model;
             m_ShaderPicking->Bind();
@@ -335,15 +389,16 @@ namespace test {
         if (ImGui::IsMouseClicked(0))
         {
             GLfloat pixel;
-            GLint x_coord = ImGui::GetIO().MousePos.x;
-            GLint y_coord = height - ImGui::GetIO().MousePos.y;
+            ImVec2 mousePos = ImGui::GetIO().MousePos;
+            GLint x_coord = mousePos.x;
+            GLint y_coord = height - mousePos.y;
 
             GLCall(glReadPixels(x_coord, y_coord, 1, 1, GL_RED, GL_FLOAT, &pixel));
             //std::cout << "Pixel value: " << pixel << std::endl;
 
             if (pixel >= cubeColor.r)
             {
-                m_RBody.SetYi(0.0f);
+                m_RBody1.SetYi(0.0f);
             }
             else if (pixel <= lightColor.r + 0.01f && pixel >= lightColor.r - 0.01f)
             {
