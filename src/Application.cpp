@@ -26,6 +26,7 @@
 #include "tests/TestSnake.h"
 #include "tests/TestGoing3D.h"
 #include "tests/TestGravity.h"
+#include "tests/TestCollisions.h"
 
 int main(void)
 {
@@ -77,6 +78,7 @@ int main(void)
         testMenu->RegisterTest<test::TestSnake>("Snake");
         testMenu->RegisterTest<test::TestGoing3D>("Going 3D");
         testMenu->RegisterTest<test::TestGravity>("Gravity");
+        testMenu->RegisterTest<test::TestCollisions>("Collisions");
 
         while (!glfwWindowShouldClose(window))
         {

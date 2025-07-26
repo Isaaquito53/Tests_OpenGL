@@ -16,7 +16,7 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 ## To Do/Fix:
 
-- Add collision test.
+- Add an optimized collision test (using instancing).
 
 - Add newton physics.
 
@@ -36,7 +36,9 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - How to implement Materials and lighting maps with shaders.
 
-- How to implement a picking objects system
+- How to implement a picking objects system.
+
+- How to implement a simple collision test.
 
 ## Credits/References:
 

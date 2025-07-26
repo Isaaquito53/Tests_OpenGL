@@ -2,8 +2,8 @@
 
 Floor::Floor()
 {
-    m_nVertices = 8;
-    Vec3 positions[8];
+    m_nVertices = 4;
+    Vec3 positions[4];
     positions[0] = { -10.0f, 0.0f, -10.0f }; // 1
     positions[1] = { 10.0f, 0.0f, -10.0f }; // 2
     positions[2] = { 10.0f,  0.0f, 10.0f }; // 3
