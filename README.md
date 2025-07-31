@@ -16,7 +16,7 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 ## To Do/Fix:
 
-- Add an optimized collision test (using instancing).
+- Add an optimized collision test (using instancing). (WIP)
 
 - Add newton physics.
 

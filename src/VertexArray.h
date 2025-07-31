@@ -13,6 +13,8 @@ public:
 	~VertexArray();
 
 	void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+	void AddInstancedAtt4fmat(int start);
+	void AddInstancedAtt3fvec(int start);
 
 	void Bind() const;
 	void Unbind() const;
