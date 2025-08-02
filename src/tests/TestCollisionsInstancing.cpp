@@ -21,7 +21,7 @@ namespace test {
         // initialitze projection and view matrix
         : m_Proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 100.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f))),
-        m_textureShader(true), m_lastShader(true),
+        m_textureShader(false), m_lastShader(false),
         m_ambientStrenght(0.1f), m_diffuseStrenght(1.0f), m_specularStrenght(0.5f), m_shininessLevel(5),
         m_Texture("./res/textures/FreeSky.png", WrappingClampEdge),
         m_TextureFloor("./res/textures/PS_Logo.png", WrappingRepeat),
@@ -29,7 +29,7 @@ namespace test {
         m_specularMap("./res/textures/container2_specular.png", WrappingRepeat),
         m_Cube(), m_Floor(), m_Axis(),
         m_RBody1(&m_Cube, -5.0f, 0.5f, -5.0f, 0.0f),
-        m_step(1.0f), m_delta(0.0f), m_play(false), m_nCubes(2), m_limit(7), m_cubePositions()
+        m_step(1.0f), m_delta(0.0f), m_play(false), m_nCubes(100), m_limit(5), m_cubePositions()
     {
         // initialize index buffer
         unsigned int offset = 0;
@@ -94,37 +94,78 @@ namespace test {
         m_bIndexBuffer = std::make_unique<BatchIndexBuffer>(indices, MaxIndexCount);
 
         // Generate instancing attributes
-        m_modelMatrices = new glm::mat4[m_nCubes];
+        unsigned int circles = 10;
+        m_currentPos = new glm::vec3[m_nCubes];
         m_directionVectors = new glm::vec3[m_nCubes];
         srand(0);
-        /*for (unsigned int i = 0; i < m_nCubes; i++)
+        for (unsigned int k = 1; k <= circles; k++)
         {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(
-                (rand() % m_limit) - (rand() % m_limit),            // Tx
-                (rand() % m_limit) - (rand() % m_limit),            // Ty
-                (rand() % m_limit) - (rand() % m_limit)));          // Tz
-            m_modelMatrices[i] = model;
+            for (unsigned int i = 0; i < m_nCubes/circles; i++)
+            {
+                m_currentPos[i+(k-1)*m_nCubes/circles] = glm::vec3(
+                    k*m_limit * cos(glm::radians(i * 360.0f / (m_nCubes / circles))),           // px
+                    0.0f,                                                                       // py
+                    k*m_limit * sin(glm::radians(i * 360.0f / (m_nCubes / circles))));          // pz
+
+                glm::vec3 dir = glm::vec3(
+                    -m_currentPos[i + (k - 1) * m_nCubes / circles].x/k,       // vx
+                    0.0f,                       // vy
+                    -m_currentPos[i + (k - 1) * m_nCubes / circles].z/k);      // vz
+                m_directionVectors[i + (k - 1) * m_nCubes / circles] = dir;
+            }
+        }
+
+        /*for (unsigned int i = 0; i < m_nCubes / 3; i++)
+        {
+            m_currentPos[i] = glm::vec3(
+                m_limit * cos(glm::radians(i * 360.0f / (m_nCubes / 3))),             // px
+                0.0f,                                                           // py
+                m_limit * sin(glm::radians(i * 360.0f / (m_nCubes / 3))));            // pz
 
             glm::vec3 dir = glm::vec3(
-                (rand() % 2) - (rand() % 2),                        // Dx
-                (rand() % 2) - (rand() % 2),                        // Dy
-                (rand() % 2) - (rand() % 2));                       // Dz
+                -m_currentPos[i].x,                         // vx
+                0.0f,                                       // vy
+                -m_currentPos[i].z);                        // vz
+            m_directionVectors[i] = dir;
+        }
+
+        for (unsigned int i = m_nCubes / 3; i < 2*m_nCubes / 3; i++)
+        {
+            m_currentPos[i] = glm::vec3(
+                2 * m_limit * cos(glm::radians(i * 360.0f / (m_nCubes / 3))),             // px
+                0.0f,                                                           // py
+                2 * m_limit * sin(glm::radians(i * 360.0f / (m_nCubes / 3))));            // pz
+
+            glm::vec3 dir = glm::vec3(
+                -m_currentPos[i].x / 2,                         // vx
+                0.0f,                                       // vy
+                -m_currentPos[i].z / 2);                        // vz
+            m_directionVectors[i] = dir;
+        }
+
+        for (unsigned int i = 2*m_nCubes / 3; i < m_nCubes; i++)
+        {
+            m_currentPos[i] = glm::vec3(
+                3 * m_limit * cos(glm::radians(i * 360.0f / (m_nCubes / 3))),             // px
+                0.0f,                                                           // py
+                3 * m_limit * sin(glm::radians(i * 360.0f / (m_nCubes / 3))));            // pz
+
+            glm::vec3 dir = glm::vec3(
+                -m_currentPos[i].x / 3,                         // vx
+                0.0f,                                       // vy
+                -m_currentPos[i].z / 3);                        // vz
             m_directionVectors[i] = dir;
         }*/
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(
-            3.0f,            // Tx
-            0.0f,            // Ty
-            0.0f));          // Tz
-        m_modelMatrices[0] = model;
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(
-            -3.0f,            // Tx
-            0.0f,            // Ty
-            0.0f));          // Tz
-        m_modelMatrices[1] = model;
+        /*
+        m_currentPos[0] = glm::vec3(
+                3.0f,               // px
+                0.0f,               // py
+                0.0f);              // pz
+        m_currentPos[1] = glm::vec3(
+                -3.0f,              // px
+                0.0f,               // py
+                0.0f);              // pz
 
         glm::vec3 dir = glm::vec3(
             -3.0f,                        // Dx
@@ -136,23 +177,19 @@ namespace test {
             0.0f,                        // Dy
             0.0f);                       // Dz
         m_directionVectors[1] = dir;
+        */
 
-        m_modelVBO = std::make_unique<VertexBuffer>(&m_modelMatrices[0], m_nCubes * sizeof(glm::mat4));
-        m_VAO->AddInstancedAtt4fmat(4); // instance model matrix (4, 5, 6, 7)
-
-        m_dirVBO = std::make_unique<VertexBuffer>(&m_directionVectors[0], m_nCubes * sizeof(glm::vec3));
-        m_VAO->AddInstancedAtt3fvec(8); // instance direction vector (8)
+        m_posVBO = std::make_unique<VertexBuffer>(&m_currentPos[0], m_nCubes * sizeof(glm::vec3));
+        m_VAO->AddInstancedAtt3fvec(4); // instance model matrix (4)
 
         m_EBO = std::make_unique<IndexBuffer>(indicesInstance, indexInstanceCount);
 
         // Main Shaders stuff
-        m_Shader = std::make_unique<Shader>("./res/shaders/InstancingMaterial.shader");
+        m_Shader = std::make_unique<Shader>("./res/shaders/InstancingPhong.shader");
         m_Shader->Bind();
 
-        // setting up some uniforms
-        m_Shader->SetUniform3f("light.position", 1.2f, 1.0f, 2.0f);
-        m_Shader->SetUniform1i("material.diffuse", 2); // 2 is the slot
-        m_Shader->SetUniform1i("material.specular", 3); // 3 is the slot
+        m_Shader->SetUniform3f("u_lightColor", 1.0f, 1.0f, 1.0f);
+        m_Shader->SetUniform3f("u_lightPos", 1.2f, 1.0f, 2.0f);
 
         // Light Shader stuff
         m_ShaderLight = std::make_unique<Shader>("./res/shaders/LightGoing3D.shader");
@@ -200,6 +237,10 @@ namespace test {
     void TestCollisionsInstancing::OnUpdate(float deltaTime)
     {
         m_cam.UpdateCam(deltaTime);
+        if (m_play)
+        {
+            CollideDetection(deltaTime);
+        }
     }
 
     void TestCollisionsInstancing::OnRender()
@@ -232,6 +273,7 @@ namespace test {
         // Draw Cube instances
         {
             m_Shader->Bind();
+            m_Shader->SetUniformMat4f("u_model", glm::mat4(1.0f));
             m_Shader->SetUniformMat4f("u_projection", m_Proj);
             m_Shader->SetUniformMat4f("u_view", m_View);
             m_Shader->SetUniform3f("u_viewPos", m_cam.m_camPos.x, m_cam.m_camPos.y, m_cam.m_camPos.z);
@@ -245,9 +287,8 @@ namespace test {
                 m_Shader->SetUniform1i("u_nCubes", m_nCubes);
                 for (unsigned int i = 0; i < m_nCubes; i++)
                 {
-                    m_Shader->SetUniformMat4f("u_models[" + std::to_string(i) + "]", m_modelMatrices[i]);
-                    m_Shader->SetUniform3f("u_dirs[" + std::to_string(i) + "]",
-                        m_directionVectors[i].x, m_directionVectors[i].y, m_directionVectors[i].z);
+                    m_Shader->SetUniform3f("u_currentPoss[" + std::to_string(i) + "]", 
+                        m_currentPos[i].x, m_currentPos[i].y, m_currentPos[i].z);
                 }
             }
             else
@@ -283,45 +324,35 @@ namespace test {
 
         if (m_play)
         {
-            CollideDetection();
-            m_delta += m_step / 120.0f;
+            m_delta += m_step / 100.0f;
         }
     }
 
-    void TestCollisionsInstancing::CollideDetection()
+    void TestCollisionsInstancing::CollideDetection(float delta)
     {
         bool collided = false;
-        glm::mat4* modelMatrices = new glm::mat4[m_nCubes];
+        glm::vec3* currentPos = new glm::vec3[m_nCubes];
         glm::vec3* directionVectors = new glm::vec3[m_nCubes];
         for (unsigned int i = 0; i < m_nCubes; i++)
         {
             directionVectors[i] = m_directionVectors[i];
-            modelMatrices[i] = m_modelMatrices[i];
-            glm::vec4 p_cube = m_modelMatrices[i] * glm::vec4(m_delta * m_directionVectors[i], 1.0f);
+            currentPos[i] = m_currentPos[i] + m_directionVectors[i] * delta;
             for (unsigned int j = 0; j < m_nCubes; j++)
             {
                 if (i != j)
                 {
-                    glm::vec4 p_other = m_modelMatrices[j] * glm::vec4(m_delta * m_directionVectors[j], 1.0f);
-                    if (glm::distance(glm::vec3(p_cube), glm::vec3(p_other)) <= 1)
+                    if (glm::distance(currentPos[i], m_currentPos[j] + m_directionVectors[j] * delta) <= 1)
                     {
                         directionVectors[i] = -m_directionVectors[i];
-                        modelMatrices[i] = glm::translate(modelMatrices[i], (m_delta * m_directionVectors[i]));
-                        collided = true;
                         break;
                     }
                 }
             }
         }
-        if (collided)
-            m_delta = 0.0f;
         m_directionVectors = directionVectors;
-        m_modelMatrices = modelMatrices;
-        m_modelVBO = std::make_unique<VertexBuffer>(&m_modelMatrices[0], m_nCubes * sizeof(glm::mat4));
-        m_VAO->AddInstancedAtt4fmat(4); // instance model matrix (4, 5, 6, 7)
-
-        m_dirVBO = std::make_unique<VertexBuffer>(&m_directionVectors[0], m_nCubes * sizeof(glm::vec3));
-        m_VAO->AddInstancedAtt3fvec(8); // instance direction vector (8)
+        m_currentPos = currentPos;
+        m_posVBO = std::make_unique<VertexBuffer>(&currentPos[0], m_nCubes * sizeof(glm::vec3));
+        m_VAO->AddInstancedAtt3fvec(4); // instance model matrix (4, 5, 6, 7)
     }
 
     void TestCollisionsInstancing::OnImGuiRender()

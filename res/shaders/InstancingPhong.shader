@@ -6,16 +6,15 @@
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
 layout(location = 3) in vec3 a_Normal;
-layout(location = 4) in mat4 a_model;
-layout(location = 8) in vec3 a_dir;
+layout(location = 4) in vec3 a_currentPos;
 
 uniform mat4 u_projection;
 uniform mat4 u_view;
+uniform mat4 u_model;
 
 uniform float u_delta;
 uniform int u_nCubes;
-uniform mat4 u_models[100];
-uniform vec3 u_dirs[100];
+uniform vec3 u_currentPoss[100];
 
 out vec4 v_Color;
 out vec3 v_FragPos;
@@ -23,14 +22,11 @@ out vec3 v_Normal;
 
 bool collisions(in vec3 p_pos)
 {
-    vec4 p_cube = a_model * vec4(p_pos, 1.0f);
     for (int i = 0; i < u_nCubes; i++)
     {
         if (i != gl_InstanceID)
         {
-            vec4 p_other = u_models[i] * vec4(a_Position + (u_delta * u_dirs[i]), 1.0f);
-        
-            if (distance(vec3(p_cube), vec3(p_other)) <= 1)
+            if (distance(a_currentPos, u_currentPoss[i]) <= 1)
             {
                 return true;
             }
@@ -43,15 +39,14 @@ bool collisions(in vec3 p_pos)
 void main()
 {
     v_Color = a_Color;
-    vec3 pos = a_Position + (u_delta * a_dir);
-    bool coll = collisions(pos);
+    bool coll = collisions(a_currentPos);
     if (coll == true)
     {
         v_Color = vec4(0.0f, 1.0f, 0.0f, 1.0f);
     }
-    gl_Position = u_projection * u_view * a_model * vec4(pos, 1.0f);
-    v_FragPos = vec3(a_model * vec4(pos, 1.0f));
-    v_Normal = mat3(transpose(inverse(a_model))) * a_Normal;
+    gl_Position = u_projection * u_view * u_model * vec4(a_Position + a_currentPos, 1.0f);
+    v_FragPos = vec3(u_model * vec4(a_Position + a_currentPos, 1.0f));
+    v_Normal = mat3(transpose(inverse(u_model))) * a_Normal;
 };
 
 #shader fragment

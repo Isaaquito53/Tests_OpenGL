@@ -31,13 +31,12 @@ namespace test {
 		void OnImGuiRender() override;
 		void OnPickingObjects(int width, int height) override;
 	private:
-		void CollideDetection();
+		void CollideDetection(float delta);
 		// Render vars
 		std::unique_ptr<VertexArray> m_VAO;
 		std::unique_ptr<VertexBuffer> m_VBO;
-		std::unique_ptr<VertexBuffer> m_modelVBO;
-		glm::mat4* m_modelMatrices;
-		std::unique_ptr<VertexBuffer> m_dirVBO;
+		std::unique_ptr<VertexBuffer> m_posVBO;
+		glm::vec3* m_currentPos;
 		glm::vec3* m_directionVectors;
 		std::unique_ptr<IndexBuffer> m_EBO;
 		std::unique_ptr<BatchVertexArray> m_bVAO;
