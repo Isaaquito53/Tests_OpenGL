@@ -14,7 +14,7 @@ out vec3 v_Normal;
 
 void main()
 {
-    v_Color = a_Color;
+    v_Color = vec4(0.5, 0.5, 0.5, 1.0);
     gl_Position = u_MVP * vec4(a_Position, 1.0f);
     v_FragPos = vec3(u_Model * vec4(a_Position, 1.0f));
     v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;

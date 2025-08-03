@@ -1,4 +1,4 @@
-#include "figures/RigidBody.h"
+#include "scene/figures/RigidBody.h"
 
 RigidBody::RigidBody()
 {

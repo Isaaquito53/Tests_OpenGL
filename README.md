@@ -16,7 +16,7 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 ## To Do/Fix:
 
-- Add scene object.
+- Add elastic collision.
 
 - Add newton physics.
 
@@ -47,3 +47,4 @@ Some simple test don't use batch rendering because are so simple that this featu
 - Base project/structure/batch rendering from TheCherno: https://www.youtube.com/watch?v=W3gAzLwfIP0&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2 
 - For the Going3D I've followed the Learn OpenGL Getting Started tutorial: https://learnopengl.com/
 - For understand some things I watched this video: https://www.youtube.com/watch?v=45MIykWJ-C4 
+- Elastic collision: https://en.wikipedia.org/wiki/Elastic_collision 

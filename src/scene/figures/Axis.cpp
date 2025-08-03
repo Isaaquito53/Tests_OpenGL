@@ -1,4 +1,4 @@
-#include "figures/Axis.h"
+#include "scene/figures/Axis.h"
 
 Axis::Axis()
 {

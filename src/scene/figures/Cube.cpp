@@ -1,4 +1,4 @@
-#include "figures/Cube.h"
+#include "scene/figures/Cube.h"
 
 Cube::Cube()
 {

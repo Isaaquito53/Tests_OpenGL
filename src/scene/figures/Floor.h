@@ -1,6 +1,6 @@
 #pragma once
 
-#include "figures/Figure.h"
+#include "scene/figures/Figure.h"
 
 class Floor : public Figure
 {

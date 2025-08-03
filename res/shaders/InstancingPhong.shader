@@ -12,7 +12,6 @@ uniform mat4 u_projection;
 uniform mat4 u_view;
 uniform mat4 u_model;
 
-uniform float u_delta;
 uniform int u_nCubes;
 uniform vec3 u_currentPoss[100];
 

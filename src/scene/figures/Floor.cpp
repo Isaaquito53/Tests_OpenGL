@@ -1,4 +1,4 @@
-#include "figures/Floor.h"
+#include "scene/figures/Floor.h"
 
 Floor::Floor()
 {

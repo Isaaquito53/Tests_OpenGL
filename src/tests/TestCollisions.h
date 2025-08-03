@@ -6,16 +6,16 @@
 #include "batch/BatchVertexBufferLayout.h"
 #include "Texture.h"
 #include "Camera.h"
-#include "figures/RigidBody.h"
-#include "figures/Cube.h"
-#include "figures/Floor.h"
-#include "figures/Axis.h"
+#include "scene/figures/RigidBody.h"
+#include "scene/figures/Cube.h"
+#include "scene/figures/Floor.h"
+#include "scene/figures/Axis.h"
 
 #include <memory>
 #include <vector>
 
 namespace test {
-	
+
 	class TestCollisions :public Test
 	{
 	public:

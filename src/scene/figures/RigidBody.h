@@ -1,6 +1,6 @@
 #pragma once
 
-#include "figures/Figure.h"
+#include "scene/figures/Figure.h"
 
 class RigidBody 
 {
@@ -23,9 +23,13 @@ public:
 	float& GetVYi() { return m_vyi; };
 	float GetVYf() { return m_vyf; };
 	float GetR() { return m_boundingR; };
+	float GetScale() { return m_scale; };
 
+	void SetFigure(Figure* fig) { m_fig = fig; };
 	void SetXi(float xi) { m_xi = xi; };
 	void SetYi(float yi) { m_yi = yi; };
+	void SetR(float r) { m_boundingR = r; };
+	void SetScale(float s) { m_scale = s; };
 
 	bool m_onAir;
 private:
@@ -41,4 +45,5 @@ private:
 	float m_gravity;
 	float m_delta;
 	float m_boundingR;
+	float m_scale;
 };

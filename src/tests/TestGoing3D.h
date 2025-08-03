@@ -6,8 +6,8 @@
 #include "batch/BatchVertexBufferLayout.h"
 #include "Texture.h"
 #include "Camera.h"
-#include "figures/Cube.h"
-#include "figures/Floor.h"
+#include "scene/figures/Cube.h"
+#include "scene/figures/Floor.h"
 
 #include <memory>
 
