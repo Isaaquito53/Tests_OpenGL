@@ -24,12 +24,14 @@ public:
 	float GetVYf() { return m_vyf; };
 	float GetR() { return m_boundingR; };
 	float GetScale() { return m_scale; };
+	float GetMass() { return m_mass; };
 
 	void SetFigure(Figure* fig) { m_fig = fig; };
 	void SetXi(float xi) { m_xi = xi; };
 	void SetYi(float yi) { m_yi = yi; };
 	void SetR(float r) { m_boundingR = r; };
 	void SetScale(float s) { m_scale = s; };
+	void SetMass(float m) { m_mass = m; };
 
 	bool m_onAir;
 private:
@@ -46,4 +48,5 @@ private:
 	float m_delta;
 	float m_boundingR;
 	float m_scale;
+	float m_mass;
 };

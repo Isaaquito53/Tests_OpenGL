@@ -26,7 +26,8 @@ public:
 	void PrepareLights(Shader & lightShader, glm::mat4 proj, glm::mat4 view);
 	void PrepareInstancedPhongFigures(Shader& figureShader, glm::mat4 proj, glm::mat4 view, Camera cam,
 		bool textureOn, Texture diffuseMap, Texture specularMap);
-	void PreparePhongFigures(Shader& figureShader, glm::mat4 proj, glm::mat4 view, Camera cam, bool textureOn);
+	void PreparePhongFigures(Shader& figureShader, glm::mat4 proj, glm::mat4 view, Camera cam, 
+		bool textureOn, int bodyIndex);
 
 	void CollideDetection(float delta);
 

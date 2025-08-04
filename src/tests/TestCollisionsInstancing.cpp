@@ -246,23 +246,16 @@ namespace test {
             renderer.DrawAxis();
         }
 
-        // Draw central Cube
-        m_bVertexBuffer->Bind(m_scene.m_bodies[1].GetFigure().m_Vertices);
+        // Draw cubes
+        for (unsigned int i = 0; i < m_scene.m_bodies.size(); i++)
         {
-            m_scene.PreparePhongFigures(*m_SingleShader, m_Proj, m_View, m_cam, m_textureShader);
+            m_bVertexBuffer->Bind(m_scene.m_bodies[i].GetFigure().m_Vertices);
+
+            m_scene.PreparePhongFigures(*m_SingleShader, m_Proj, m_View, m_cam, m_textureShader, i);
 
             m_bVAO->Bind();
 
             renderer.Draw(*m_bVAO, *m_bIndexBuffer, *m_SingleShader);
-        }
-
-        // Draw Cube instances
-        {
-            m_scene.PrepareInstancedPhongFigures(*m_InstancedShader, m_Proj, m_View, m_cam, m_textureShader, m_diffuseMap, m_specularMap);
-
-            m_VAO->Bind();
-
-            GLCall(glDrawElementsInstanced(GL_TRIANGLES, indexInstanceCount, GL_UNSIGNED_INT, nullptr, m_scene.m_nCubes));
         }
 
         m_bVertexBuffer->Bind(m_scene.m_bodies[0].GetFigure().m_Vertices);
@@ -283,7 +276,8 @@ namespace test {
 
     void TestCollisionsInstancing::CollideDetection(float delta)
     {
-        m_scene.CollideDetection(delta);
+        if (delta >= 0.01)
+            m_scene.CollideDetection(delta);
 
         m_posVBO = std::make_unique<VertexBuffer>(&m_scene.m_currentPos[0], m_scene.m_nCubes * sizeof(glm::vec3));
         m_VAO->AddInstancedAtt3fvec(4); // instance model matrix (4, 5, 6, 7)

@@ -42,6 +42,8 @@ Some simple test don't use batch rendering because are so simple that this featu
 
 - How to implement instanced rendering.
 
+- How to implement Elastic collision.
+
 ## Credits/References:
 
 - Base project/structure/batch rendering from TheCherno: https://www.youtube.com/watch?v=W3gAzLwfIP0&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2 
